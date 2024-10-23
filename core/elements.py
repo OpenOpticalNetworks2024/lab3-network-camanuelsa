@@ -1,11 +1,12 @@
 import json
+from parameters import cf
 
 class Signal_information(object):
     def __init__(self, signal_power, path):
-        self._signal_power = float(signal_power)
+        self._signal_power = signal_power
         self._noise_power = 0.0
         self._latency = 0.0
-        self._path = list(map(str, path))
+        self._path = path
 
     @property
     def signal_power(self):
@@ -106,19 +107,19 @@ class Line(object):
     def successive(self, dic):
         self._successive = dic
 
-    def latency_generation(self, cf):
+    def latency_generation(self):
         return self._length / cf
 
     def noise_generation(self, signal_power):
         return 1e-9 * signal_power * self._length
 
-    def propagate(self, sgn, cf):
-        sgn.update_latency(self.latency_generation(cf))
+    def propagate(self, sgn):
+        sgn.update_latency(self.latency_generation())
         sgn.update_noise_power(self.noise_generation(sgn.signal_power))
         if sgn.path:
             nxt = sgn.path[0]
             if nxt in self._successive:
-                self._successive[nxt].propagate(sgn, cf)
+                self._successive[nxt].propagate(sgn)
 
 class Network(object):
     def __init__(self):
