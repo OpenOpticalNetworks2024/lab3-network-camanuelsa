@@ -168,7 +168,7 @@ class Network(object):
         plt.ylabel('Y position')
         plt.title('Network')
         plt.grid(True)
-        plt.savefig('network.png')
+        plt.savefig('../network.png')
         plt.show()
 
     # find_paths: given two node labels, returns all paths that connect the 2 nodes
