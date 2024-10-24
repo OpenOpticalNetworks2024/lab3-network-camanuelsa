@@ -17,7 +17,7 @@ for src in network.nodes: # start of the path (source)
             paths = network.find_paths(src, dst) # all paths from start to end
             for path in paths: # working one path at time
                 path_string = '->'.join(path) # creating the string of the path as A->B_>...
-                signal = network.propagate(Signal_information(1e-3, path)) # propagating the signal from start to end and uptade its information
+                signal = network.propagate(Signal_information(1e-3, path)) # propagating the signal from start to end and update its information
                 total_latency = signal.latency # latency of the signal along the path
                 total_noise = signal.noise_power # noise of the signal along the path
                 snr_db = lin2db(signal.signal_power / total_noise) # SNR of the signal along the path
@@ -29,7 +29,7 @@ for src in network.nodes: # start of the path (source)
                 })
 df = pd.DataFrame(paths_data) # transform the list of paths data into a panda dataframe
 csv_path = ROOT / 'weighted_path.csv'
-df.to_csv(csv_path, index=False) # report on an csv file the dataframe
+df.to_csv(csv_path, index=False) # report on a csv file the dataframe
 network.draw() # draw the network and export a png of it
 print(f"Results saved to {csv_path}")
 
