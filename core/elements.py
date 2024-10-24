@@ -6,7 +6,7 @@ from core.parameters import cf
 class Signal_information(object):
     def __init__(self, signal_power, path):
         self._signal_power = signal_power
-        self._noise_power = 1e-12
+        self._noise_power = 0.0
         self._latency = 0.0
         self._path = path
 
@@ -14,6 +14,7 @@ class Signal_information(object):
     def signal_power(self):
         return self._signal_power
 
+    # function to increment the signal power
     def update_signal_power(self, inc):
         self._signal_power += inc
 
@@ -25,6 +26,7 @@ class Signal_information(object):
     def noise_power(self, val):
         self._noise_power = val
 
+    # function to increment the signal noise
     def update_noise_power(self, inc):
         self._noise_power += inc
 
@@ -36,6 +38,7 @@ class Signal_information(object):
     def latency(self, val):
         self._latency = val
 
+    # function to increment the signal latency
     def update_latency(self, inc):
         self._latency += inc
 
@@ -47,6 +50,7 @@ class Signal_information(object):
     def path(self, new_path):
         self._path = new_path
 
+    # function to delete the already used node from the path
     def update_path(self):
         if self._path:
             self._path.pop(0)
@@ -79,6 +83,7 @@ class Node(object):
     def successive(self, dic):
         self._successive = dic
 
+    # function to propagate the signal to the next line and update the path or finish the propagation
     def propagate(self, sgn):
         sgn.update_path()
         if sgn.path:
@@ -110,12 +115,15 @@ class Line(object):
     def successive(self, dic):
         self._successive = dic
 
+    # generation of the latency
     def latency_generation(self):
         return self._length / cf
 
+    # generation of the noise power
     def noise_generation(self, signal_power):
         return 1e-9 * signal_power * self._length
 
+    # function to propagate the signal to the next node and update the latency and noise power depending on the line
     def propagate(self, sgn):
         sgn.update_latency(self.latency_generation())
         sgn.update_noise_power(self.noise_generation(sgn.signal_power))
@@ -133,10 +141,12 @@ class Network(object):
         data = json.load(file)
         file.close()
 
+        # read from json data the information for the nodes
         for label, node_data in data.items():
             node = Node(label, tuple(node_data['position']), node_data['connected_nodes'])
             self._nodes[label] = node
 
+        # read from json data the information for the lines
         for node_label, node in self._nodes.items():
             for connected_node_label in node.connected_nodes:
                 if connected_node_label in self._nodes:
@@ -153,6 +163,7 @@ class Network(object):
     def lines(self):
         return self._lines
 
+    # plot of the network
     def draw(self):
         fig, ax = plt.subplots()
         for line in self._lines.values():
